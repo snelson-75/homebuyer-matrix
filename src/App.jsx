@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 
 /* ============================================================
     AM I READY? — Homebuyer Readiness Tracker
-    Commercial Standalone Product Edition (Master Release v2.2)
+    Commercial Standalone Product Edition (Master Release v2.3)
     Educational/informational only. Not financial advice.
     Calculations are self-contained and run on the user's device.
     ============================================================ */
 const CONFIG = {
   author: "HomePath Digital Products",
-  productVersion: "2.2.0",
+  productVersion: "2.3.0",
 };
 
 const STORE_KEY = "amiready:commercial_master";
@@ -30,11 +30,10 @@ function creditBand(score) {
 }
 
 export default function CommercialReadinessTracker() {
-  // All default initial values set to zero per user request
   const [income, setIncome] = useState(0);
   const [credit, setCredit] = useState(0);
   const [targetDti, setTargetDti] = useState(43);
-  const [debts, setDebts] = useState([]); // Started completely blank with zero placeholder cards
+  const [debts, setDebts] = useState([]);
   const [price, setPrice] = useState(0);
   const [dpPct, setDpPct] = useState(0);
   const [closingPct, setClosingPct] = useState(0);
@@ -188,7 +187,7 @@ export default function CommercialReadinessTracker() {
     .rt-help[open] summary:before{content:"▾ ";}
     .rt-help .body{font-size:12.5px;color:var(--ink2);line-height:1.55;padding:0 12px 11px;}
     .rt-master{border:1px solid var(--line);border-radius:12px;background:#fff;}
-    .rt-fac{border-bottom:1px dashed var(--line);}
+    .rt-day{border-bottom:1px dashed var(--line);}
     .rt-fac:last-child{border-bottom:0;}
     .rt-fac summary{cursor:pointer;font-size:13.5px;font-weight:600;padding:11px 14px;list-style:none;display:flex;justify-content:space-between;}
     .rt-fac summary::-webkit-details-marker{display:none;}
@@ -267,7 +266,6 @@ export default function CommercialReadinessTracker() {
                   </div>
                 </div>
               ))}
-              {/* Reworded string text link per user request */}
               <button className="rt-add" onClick={addDebt}>+ Add New Liability</button>
               <details className="rt-help"><summary>Which debts should be declared here?</summary><div className="body"><b>Include:</b> Structured credit configurations with set monthly minimum boundaries: car contracts, rolling card obligations, student profiles (even while deferred), or signature personal lines.<br /><b>Exclude:</b> Current residential lease parameters, utilities, recurring groceries, car insurance policies, or standard streaming applications.</div></details>
             </div>
@@ -288,10 +286,12 @@ export default function CommercialReadinessTracker() {
               <div className="rt-kicker">3 · Target capital & goals</div>
               <div className="rt-row">
                 <div className="rt-field"><label>Target purchase price</label><input className="rt-input" type="number" value={price === 0 ? "" : price} placeholder="0" onChange={(e) => setPrice(Number(e.target.value))} /></div>
-                <div className="rt-field"><label>Down payment strategy <span className="hint">%</span></label><input className="rt-input" type="number" value={dpPct === 0 ? "" : dpPct} placeholder="0" onChange={(e) => setDpPct(Number(e.target.value))} /></div>
+                {/* Applied user request suggestion for Down Payment Strategy text */}
+                <div className="rt-field"><label>Down payment strategy <span className="hint">% (3.5% is suggested)</span></label><input className="rt-input" type="number" value={dpPct === 0 ? "" : dpPct} placeholder="0" onChange={(e) => setDpPct(Number(e.target.value))} /></div>
               </div>
               <div className="rt-row">
-                <div className="rt-field"><label>Est. transactional costs <span className="hint">%</span></label><input className="rt-input" type="number" step="0.1" value={closingPct === 0 ? "" : closingPct} placeholder="0" onChange={(e) => setClosingPct(Number(e.target.value))} /></div>
+                {/* Applied user request text swap and alignment for Estimated Closing Costs text */}
+                <div className="rt-field"><label>Estimated closing costs <span className="hint">% (3% is suggested)</span></label><input className="rt-input" type="number" step="0.1" value={closingPct === 0 ? "" : closingPct} placeholder="0" onChange={(e) => setClosingPct(Number(e.target.value))} /></div>
                 <div className="rt-field"><label>Target baseline ceiling DTI <span className="hint">%</span></label><input className="rt-input" type="number" value={targetDti} onChange={(e) => setTargetDti(Number(e.target.value))} /></div>
               </div>
               <div className="rt-row">
@@ -299,7 +299,6 @@ export default function CommercialReadinessTracker() {
                 <div className="rt-field"><label>Monthly regular savings velocity</label><input className="rt-input" type="number" value={monthly === 0 ? "" : monthly} placeholder="0" onChange={(e) => setMonthly(Number(e.target.value))} /></div>
               </div>
               
-              {/* Reworded action component with normal people explanation below */}
               <div style={{ marginTop: 18 }}>
                 <div className="rt-save">
                   <button className="rt-btn prim" onClick={saveProgress}>Save Your Progress Safely</button>
