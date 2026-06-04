@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 
 /* ============================================================
     AM I READY? — Homebuyer Readiness Tracker
-    Commercial Standalone Product Edition (Master Release)
+    Commercial Standalone Product Edition (Master Release v2.2)
     Educational/informational only. Not financial advice.
     Calculations are self-contained and run on the user's device.
     ============================================================ */
 const CONFIG = {
   author: "HomePath Digital Products",
-  productVersion: "2.1.0",
+  productVersion: "2.2.0",
 };
 
 const STORE_KEY = "amiready:commercial_master";
@@ -30,18 +30,16 @@ function creditBand(score) {
 }
 
 export default function CommercialReadinessTracker() {
-  const [income, setIncome] = useState(7500);
-  const [credit, setCredit] = useState(700);
+  // All default initial values set to zero per user request
+  const [income, setIncome] = useState(0);
+  const [credit, setCredit] = useState(0);
   const [targetDti, setTargetDti] = useState(43);
-  const [debts, setDebts] = useState([
-    { id: uid(), name: "Visa", type: "Credit card", balance: 4200, payment: 140, limit: 6000 },
-    { id: uid(), name: "Car", type: "Auto loan", balance: 18500, payment: 430, limit: 0 },
-  ]);
-  const [price, setPrice] = useState(350000);
-  const [dpPct, setDpPct] = useState(3.5);
-  const [closingPct, setClosingPct] = useState(3);
-  const [saved, setSaved] = useState(6000);
-  const [monthly, setMonthly] = useState(600);
+  const [debts, setDebts] = useState([]); // Started completely blank with zero placeholder cards
+  const [price, setPrice] = useState(0);
+  const [dpPct, setDpPct] = useState(0);
+  const [closingPct, setClosingPct] = useState(0);
+  const [saved, setSaved] = useState(0);
+  const [monthly, setMonthly] = useState(0);
   const [status, setStatus] = useState("");
 
   useEffect(() => {
@@ -70,11 +68,11 @@ export default function CommercialReadinessTracker() {
   const saveProgress = () => {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({ income, credit, targetDti, debts, price, dpPct, closingPct, saved, monthly }));
-      setStatus("Progress compiled to your browser cache ✓");
+      setStatus("Progress saved successfully ✓");
     } catch (e) {
-      setStatus("Progress held temporarily in this screen session.");
+      setStatus("Progress held temporarily in this window session.");
     }
-    setTimeout(() => setStatus(""), 2600);
+    setTimeout(() => setStatus(""), 3500);
   };
 
   const triggerPrint = () => {
@@ -148,7 +146,6 @@ export default function CommercialReadinessTracker() {
     .rt-input:focus,.rt-select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(31,107,92,.12);}
     .rt-row{display:flex;gap:12px;}.rt-row>*{flex:1;}
     
-    /* Responsive Debt Cards System */
     .rt-debtcard{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff;}
     .rt-debtcard input,.rt-debtcard select{padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;width:100%;background:#fff;color:var(--ink);}
     .rt-debtcard input:focus,.rt-debtcard select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(31,107,92,.1);}
@@ -225,8 +222,8 @@ export default function CommercialReadinessTracker() {
             <div className="rt-card">
               <div className="rt-kicker">1 · Income & credit profiles</div>
               <div className="rt-row">
-                <div className="rt-field"><label>Gross monthly income</label><input className="rt-input" type="number" value={income} onChange={(e) => setIncome(e.target.value)} /></div>
-                <div className="rt-field"><label>Current credit score</label><input className="rt-input" type="number" value={credit} onChange={(e) => setCredit(e.target.value)} /></div>
+                <div className="rt-field"><label>Gross monthly income</label><input className="rt-input" type="number" value={income === 0 ? "" : income} placeholder="0" onChange={(e) => setIncome(Number(e.target.value))} /></div>
+                <div className="rt-field"><label>Current credit score</label><input className="rt-input" type="number" value={credit === 0 ? "" : credit} placeholder="0" onChange={(e) => setCredit(Number(e.target.value))} /></div>
               </div>
               
               <details className="rt-help">
@@ -259,18 +256,19 @@ export default function CommercialReadinessTracker() {
               {debts.map((x) => (
                 <div className="rt-debtcard" key={x.id}>
                   <div className="rt-debttop">
-                    <input value={x.name} placeholder="Debt identification" onChange={(e) => updDebt(x.id, "name", e.target.value)} />
+                    <input value={x.name} placeholder="e.g., Visa card, Car loan" onChange={(e) => updDebt(x.id, "name", e.target.value)} />
                     <select value={x.type} onChange={(e) => updDebt(x.id, "type", e.target.value)}>{DEBT_TYPES.map(t => <option key={t}>{t}</option>)}</select>
                     <button className="x" onClick={() => delDebt(x.id)}>✕</button>
                   </div>
                   <div className="rt-debtfields">
-                    <div className="f"><label>Total Balance</label><input type="number" value={x.balance} onChange={(e) => updDebt(x.id, "balance", e.target.value)} /></div>
-                    <div className="f"><label>Payment / mo</label><input type="number" value={x.payment} onChange={(e) => updDebt(x.id, "payment", e.target.value)} /></div>
-                    <div className="f"><label>Card limit</label><input type="number" value={x.limit} placeholder="Cards only" onChange={(e) => updDebt(x.id, "limit", e.target.value)} /></div>
+                    <div className="f"><label>Total Balance</label><input type="number" value={x.balance === 0 ? "" : x.balance} placeholder="0" onChange={(e) => updDebt(x.id, "balance", Number(e.target.value))} /></div>
+                    <div className="f"><label>Payment / mo</label><input type="number" value={x.payment === 0 ? "" : x.payment} placeholder="0" onChange={(e) => updDebt(x.id, "payment", Number(e.target.value))} /></div>
+                    <div className="f"><label>Card limit</label><input type="number" value={x.limit === 0 ? "" : x.limit} placeholder="Cards only" onChange={(e) => updDebt(x.id, "limit", Number(e.target.value))} /></div>
                   </div>
                 </div>
               ))}
-              <button className="rt-add" onClick={addDebt}>+ Append New Liability</button>
+              {/* Reworded string text link per user request */}
+              <button className="rt-add" onClick={addDebt}>+ Add New Liability</button>
               <details className="rt-help"><summary>Which debts should be declared here?</summary><div className="body"><b>Include:</b> Structured credit configurations with set monthly minimum boundaries: car contracts, rolling card obligations, student profiles (even while deferred), or signature personal lines.<br /><b>Exclude:</b> Current residential lease parameters, utilities, recurring groceries, car insurance policies, or standard streaming applications.</div></details>
             </div>
 
@@ -289,20 +287,27 @@ export default function CommercialReadinessTracker() {
             <div className="rt-card">
               <div className="rt-kicker">3 · Target capital & goals</div>
               <div className="rt-row">
-                <div className="rt-field"><label>Target purchase price</label><input className="rt-input" type="number" value={price} onChange={(e) => setPrice(e.target.value)} /></div>
-                <div className="rt-field"><label>Down payment strategy <span className="hint">%</span></label><input className="rt-input" type="number" value={dpPct} onChange={(e) => setDpPct(e.target.value)} /></div>
+                <div className="rt-field"><label>Target purchase price</label><input className="rt-input" type="number" value={price === 0 ? "" : price} placeholder="0" onChange={(e) => setPrice(Number(e.target.value))} /></div>
+                <div className="rt-field"><label>Down payment strategy <span className="hint">%</span></label><input className="rt-input" type="number" value={dpPct === 0 ? "" : dpPct} placeholder="0" onChange={(e) => setDpPct(Number(e.target.value))} /></div>
               </div>
               <div className="rt-row">
-                <div className="rt-field"><label>Est. transactional costs <span className="hint">%</span></label><input className="rt-input" type="number" step="0.1" value={closingPct} onChange={(e) => setClosingPct(e.target.value)} /></div>
-                <div className="rt-field"><label>Target baseline ceiling DTI <span className="hint">%</span></label><input className="rt-input" type="number" value={targetDti} onChange={(e) => setTargetDti(e.target.value)} /></div>
+                <div className="rt-field"><label>Est. transactional costs <span className="hint">%</span></label><input className="rt-input" type="number" step="0.1" value={closingPct === 0 ? "" : closingPct} placeholder="0" onChange={(e) => setClosingPct(Number(e.target.value))} /></div>
+                <div className="rt-field"><label>Target baseline ceiling DTI <span className="hint">%</span></label><input className="rt-input" type="number" value={targetDti} onChange={(e) => setTargetDti(Number(e.target.value))} /></div>
               </div>
               <div className="rt-row">
-                <div className="rt-field"><label>Current validated savings assets</label><input className="rt-input" type="number" value={saved} onChange={(e) => setSaved(e.target.value)} /></div>
-                <div className="rt-field"><label>Monthly regular savings velocity</label><input className="rt-input" type="number" value={monthly} onChange={(e) => setMonthly(e.target.value)} /></div>
+                <div className="rt-field"><label>Current validated savings assets</label><input className="rt-input" type="number" value={saved === 0 ? "" : saved} placeholder="0" onChange={(e) => setSaved(Number(e.target.value))} /></div>
+                <div className="rt-field"><label>Monthly regular savings velocity</label><input className="rt-input" type="number" value={monthly === 0 ? "" : monthly} placeholder="0" onChange={(e) => setMonthly(Number(e.target.value))} /></div>
               </div>
-              <div className="rt-save">
-                <button className="rt-btn prim" onClick={saveProgress}>Commit Parameters to Device Cache</button>
-                {status && <span className="rt-status">{status}</span>}
+              
+              {/* Reworded action component with normal people explanation below */}
+              <div style={{ marginTop: 18 }}>
+                <div className="rt-save">
+                  <button className="rt-btn prim" onClick={saveProgress}>Save Your Progress Safely</button>
+                  {status && <span className="rt-status">{status}</span>}
+                </div>
+                <p className="rt-sub" style={{ marginTop: 8, fontSize: "12px", lineHeight: "1.4" }}>
+                  <b>What does this button do?</b> Clicking this saves your numbers directly inside your phone or laptop's built-in web browser storage. Your data is completely private to you. You can safely close this window, come back later, and your workspace will automatically load back up exactly where you left off!
+                </p>
               </div>
             </div>
           </div>
