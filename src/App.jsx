@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 
 /* ============================================================
     AM I READY? — Homebuyer Readiness Tracker
-    Commercial Standalone Product Edition (Master Release v2.3)
+    Commercial Standalone Product Edition (Master Release v2.3.2)
     Educational/informational only. Not financial advice.
     Calculations are self-contained and run on the user's device.
     ============================================================ */
 const CONFIG = {
   author: "HomePath Digital Products",
-  productVersion: "2.3.0",
+  productVersion: "2.3.2",
 };
 
 const STORE_KEY = "amiready:commercial_master";
@@ -140,7 +140,7 @@ export default function CommercialReadinessTracker() {
     .rt-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 40px -30px rgba(25,23,18,.45);margin-bottom:20px;}
     .rt-kicker{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--clay);font-weight:600;margin-bottom:12px;}
     .rt-field{margin-bottom:14px;}.rt-field label{display:block;font-size:13px;font-weight:600;margin-bottom:5px;}
-    .rt-field .hint{font-weight:400;color:var(--ink2);}
+    .rt-field .hint{font-weight:400;color:var(--ink2);font-size:12px;}
     .rt-input,.rt-select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink);}
     .rt-input:focus,.rt-select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(31,107,92,.12);}
     .rt-row{display:flex;gap:12px;}.rt-row>*{flex:1;}
@@ -187,7 +187,7 @@ export default function CommercialReadinessTracker() {
     .rt-help[open] summary:before{content:"▾ ";}
     .rt-help .body{font-size:12.5px;color:var(--ink2);line-height:1.55;padding:0 12px 11px;}
     .rt-master{border:1px solid var(--line);border-radius:12px;background:#fff;}
-    .rt-day{border-bottom:1px dashed var(--line);}
+    .rt-fac{border-bottom:1px dashed var(--line);}
     .rt-fac:last-child{border-bottom:0;}
     .rt-fac summary{cursor:pointer;font-size:13.5px;font-weight:600;padding:11px 14px;list-style:none;display:flex;justify-content:space-between;}
     .rt-fac summary::-webkit-details-marker{display:none;}
@@ -286,12 +286,20 @@ export default function CommercialReadinessTracker() {
               <div className="rt-kicker">3 · Target capital & goals</div>
               <div className="rt-row">
                 <div className="rt-field"><label>Target purchase price</label><input className="rt-input" type="number" value={price === 0 ? "" : price} placeholder="0" onChange={(e) => setPrice(Number(e.target.value))} /></div>
-                {/* Applied user request suggestion for Down Payment Strategy text */}
-                <div className="rt-field"><label>Down payment strategy <span className="hint">% (3.5% is suggested)</span></label><input className="rt-input" type="number" value={dpPct === 0 ? "" : dpPct} placeholder="0" onChange={(e) => setDpPct(Number(e.target.value))} /></div>
+                <div className="rt-field">
+                  <label>
+                    Down payment strategy <span className="hint">(3.5% is suggested)</span>
+                  </label>
+                  <input className="rt-input" type="number" value={dpPct === 0 ? "" : dpPct} placeholder="%" onChange={(e) => setDpPct(Number(e.target.value))} />
+                </div>
               </div>
               <div className="rt-row">
-                {/* Applied user request text swap and alignment for Estimated Closing Costs text */}
-                <div className="rt-field"><label>Estimated closing costs <span className="hint">% (3% is suggested)</span></label><input className="rt-input" type="number" step="0.1" value={closingPct === 0 ? "" : closingPct} placeholder="0" onChange={(e) => setClosingPct(Number(e.target.value))} /></div>
+                <div className="rt-field">
+                  <label>
+                    Estimated closing costs <span className="hint">(3% is suggested)</span>
+                  </label>
+                  <input className="rt-input" type="number" step="0.1" value={closingPct === 0 ? "" : closingPct} placeholder="%" onChange={(e) => setClosingPct(Number(e.target.value))} />
+                </div>
                 <div className="rt-field"><label>Target baseline ceiling DTI <span className="hint">%</span></label><input className="rt-input" type="number" value={targetDti} onChange={(e) => setTargetDti(Number(e.target.value))} /></div>
               </div>
               <div className="rt-row">
